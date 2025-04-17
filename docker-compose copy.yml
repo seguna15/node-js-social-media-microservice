@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+    - "3000:3000"
+    env_file: ./api-gateway/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672 
+    
+  identity-service:
+    build: ./identity-service
+    env_file: ./identity-service/.env
+    depends_on:
+      mongo_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - MONGO_URL=mongodb://mongo_db:27017/social-media-microservice
+
+  post-service:
+    build: ./post-service
+    env_file: ./post-service/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672 
+      - MONGO_URL=mongodb://mongo_db:27017/social-media-microservice
+
+  media-service:
+    build: ./media-service
+    env_file: ./media-service/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672 
+      - MONGO_URL=mongodb://mongo_db:27017/social-media-microservice
+
+  search-service:
+    build: ./search-service
+    env_file: ./search-service/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672 
+      - MONGO_URL=mongodb://mongo_db:27017/social-media-microservice
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6378:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+  
+  rabbitmq: 
+    image: rabbitmq:management
+    ports:
+      - "5673:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
+
+  mongo_db:
+    container_name: mongo_db
+    image: mongo:latest
+    restart: always
+    ports:
+      - "2717:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+    
+    volumes:
+      - mongo_db_data:/data/db 
+
+volumes:
+  mongo_db_data: 
+    driver: local
