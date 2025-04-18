@@ -1,6 +1,49 @@
 version: '3.8'
 
 services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    env_file: ./api-gateway/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    
+
+  identity-service:
+    build: ./identity-service
+    env_file: ./identity-service/.env
+    depends_on:
+      mongo_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - MONGO_URL=mongodb://mongo_db:27017/social-media-microservice
+    
+
+  post-service:
+    build: ./post-service
+    env_file: ./post-service/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - MONGO_URL=mongodb://mongo_db:27017/social-media-microservice
+    
   redis:
     image: redis:alpine
     ports:

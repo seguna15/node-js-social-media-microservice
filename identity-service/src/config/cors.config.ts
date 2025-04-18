@@ -5,7 +5,7 @@ export const configureCors = () => {
   return cors({
     //allowed access to origin
     origin: (origin, callback) => {
-      const allowedOrigins = ["http://localhost:3000", "http://localhost:5173",  "https://example.com"];
+      const allowedOrigins = ["http://localhost:3000"];
 
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true); //given permission to allow request

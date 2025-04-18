@@ -14,7 +14,7 @@ import { NextFunction, Request, Response } from "express";
  * @route /api/auth/register
  * @access public
  * @argument userData {username, email, password}
- * @return success: boolean, message: string
+ * @return Promise<void>
  */
 export const RegisterCtrl = async (req: Request, res: Response, next: NextFunction) => {
     logger.info('Register controller called');
@@ -62,7 +62,7 @@ export const RegisterCtrl = async (req: Request, res: Response, next: NextFuncti
  * @route /api/auth/login
  * @access public
  * @argument userData {email, password}
- * @return success: boolean, message: string
+ * @return Promise<void>
  */
 export const loginCtrl = async (req: Request, res: Response, next: NextFunction) => {
     logger.info('Login controller called')
@@ -118,7 +118,7 @@ export const loginCtrl = async (req: Request, res: Response, next: NextFunction)
  * @route /api/auth/logout
  * @access public
  * @argument none
- * @return success: boolean, message: string
+ * @return Promise<void>
  */
 export const logoutCtrl = async(req: Request, res: Response, next: NextFunction) => {
     logger.info('Logout controller called')
@@ -150,7 +150,7 @@ export const logoutCtrl = async(req: Request, res: Response, next: NextFunction)
  * @route /api/auth/refresh-token
  * @access public
  * @argument none
- * @return success: boolean, message: string
+ * @return Promise<void>
  */
 export const refreshAccessToken = async(req: Request, res: Response, next: NextFunction) => {
     logger.info('Refresh token controller called')
