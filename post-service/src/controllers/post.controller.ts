@@ -1,7 +1,8 @@
+import { publishEvent } from "@/config/rabbitmq.config";
 import { InvalidRequestError } from "@/errors/InvalidRequestError";
 import { NotFoundError } from "@/errors/NotFoundError";
 import { createPost, deletePost, getAllPosts, getPostById } from "@/services/post.service";
-import { invalidateCache, logger, postCreationSchema } from "@/utils";
+import { invalidateCache, logger, postCreationSchema, successResponse } from "@/utils";
 import { NextFunction, Request, Response } from "express";
 
 
@@ -121,23 +122,27 @@ export const deleteSinglePostCtrl = async (req: Request, res: Response, next: Ne
             return;
         }
 
+        //publish delete post event
+        await publishEvent("post.deleted", {
+            postId: post?._id?.toString(),
+            userId,
+            media: post?.media
+        })
+
+        // invalidate cache
         await invalidateCache(id);
 
         logger.info(`Post deleted successfully: ${post._id}`)
-        res.status(200).json({
-            success: true,
-            message: "Post deleted successfully"
-        })
-        return;
+        successResponse(
+            res,
+            null,
+            "Post deleted successfully",
+            200
+        )
+        return; 
     }catch(error){
         logger.error(`Error deleting post: ${error}`);
         next(new Error("Oops Something went wrong"));
         return;
     }
 }
-
-
-
-
-
-

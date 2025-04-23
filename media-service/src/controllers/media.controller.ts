@@ -1,8 +1,8 @@
 import { UploadApiResponse } from "cloudinary";
 
 import { InvalidRequestError } from "@/errors/InvalidRequestError";
-import { createMedia } from "@/services/media.service";
-import { logger, uploadMediaToCloudinary } from "@/utils";
+import { createMedia, fetchAll } from "@/services/media.service";
+import { logger, successResponse, uploadMediaToCloudinary } from "@/utils";
 import { NextFunction, Request, Response } from "express";
 
 
@@ -60,4 +60,31 @@ export const uploadMediaCtrl = async (req: Request, res: Response, next: NextFun
         next(new Error("Oops Something went wrong."));
         return;
     }
+}
+
+
+/***
+ * @route /api/media
+ * @method GET
+ * @access protected
+ * @argument 
+ * @return Promise<void>
+ */
+export const getAllMedia = async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Fetching all media...`);
+  try {
+   
+    const result = await fetchAll();
+    successResponse(
+      res,
+      result,
+      "Media fetched successfully",
+      200
+    );
+    return;
+  } catch (error) {
+    logger.error(`Error fetching media: ${error}`)
+    next(new Error("Oops Something went wrong."));
+    return;
+  }
 }

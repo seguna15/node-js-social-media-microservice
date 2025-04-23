@@ -22,3 +22,12 @@ export const createMedia = async (payload: ICreateMedia) => {
     await newMedia.save();
     return newMedia;
 }
+
+
+export const fetchAll = async() => {
+   const result = await Media.find();
+   return result;
+}
+
+
+
