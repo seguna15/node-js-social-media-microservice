@@ -5,9 +5,8 @@ import { globalErrorHandler, rateLimiter } from "@/middlewares";
 import helmet from "helmet";
 
 import cookieParser from "cookie-parser";
-import { identityServiceProxy, postServiceProxy } from "@/proxies";
+import { identityServiceProxy, postServiceProxy, mediaServiceProxy, searchServiceProxy, commentServiceProxy } from "@/proxies";
 import { protectedRoute } from "@/middlewares";
-import { mediaServiceProxy } from "@/proxies/media-service.proxy";
 
 const app: Express = express();
 
@@ -55,6 +54,9 @@ app.use("/v1/posts", protectedRoute, postServiceProxy(proxyOptions));
 
 app.use("/v1/media", protectedRoute, mediaServiceProxy(proxyOptions));
 
+app.use("/v1/search", protectedRoute, searchServiceProxy(proxyOptions));
+
+app.use("/v1/comments", protectedRoute, commentServiceProxy(proxyOptions));
 
 app.use(globalErrorHandler)
 

@@ -2,10 +2,10 @@ import express, { Express, Request, Response,  NextFunction } from "express";
 import { configureCors } from "@/config";
 import { logger } from "@/utils";
 import helmet from "helmet";
-import { globalErrorHandler} from "@/middlewares";
+import { globalErrorHandler } from "@/middlewares";
 import cookieParser from "cookie-parser";
-import routes from "@/routes/media.route";
-
+import routes from "@/routes/comment.route";
+import { rateLimit } from "@/middlewares/rateLimit.middleware";
 
 const app: Express = express();
 
@@ -13,7 +13,6 @@ app.use(helmet())
 app.use(configureCors());
 app.use(cookieParser())
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
 
 
 app.use((req, _res, next) => {
@@ -23,14 +22,18 @@ app.use((req, _res, next) => {
 });
 
 
-//Routes
-app.use("/api/media", routes)
+app.use(rateLimit);
 
-app.get("/api/media/public/health", async(req: Request, res: Response, next: NextFunction) => {
+
+//Routes
+
+app.use("/api/comments", routes)
+
+app.get("/api/comments/public/health", async(req: Request, res: Response, next: NextFunction) => {
 
     res.status(200).json({
         success: true,
-        message: "Media service is healthy"
+        message: "Comment service is healthy"
     })
     return
 })

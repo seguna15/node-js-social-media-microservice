@@ -27,6 +27,14 @@ export const createPostCrl = async (req: Request, res: Response, next: NextFunct
         
         const post = await createPost({title, content, media}, id);
 
+        await publishEvent("post.created", {
+            postId: post?._id?.toString(),
+            userId: id,
+            title,
+            content,
+            createdAt: post?.createdAt
+        })
+
         await invalidateCache();
 
         logger.info(`Post created successfully: ${post._id}`)

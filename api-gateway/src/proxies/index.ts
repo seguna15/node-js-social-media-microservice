@@ -1,2 +1,5 @@
 export * from "./identity-service.proxy"
 export * from "./post-service.proxy"
+export * from "./media-service.proxy"
+export * from "./search-service.proxy"
+export * from "./comment-service.proxy"

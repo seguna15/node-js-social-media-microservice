@@ -29,7 +29,7 @@ app.use(rateLimit);
 
 app.use("/api/posts", routes)
 
-app.get("/api/posts/health", async(req: Request, res: Response, next: NextFunction) => {
+app.get("/api/posts/public/health", async(req: Request, res: Response, next: NextFunction) => {
 
     res.status(200).json({
         success: true,
